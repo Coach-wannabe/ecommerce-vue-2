@@ -1,62 +1,47 @@
 <template>
     <div class="product-list-page">
       <h1>Our Products</h1>
-  
-      <!-- Product Grid -->
       <div class="product-grid">
-        <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
-          <NuxtLink :to="{ name: 'product-id', params: { id: product.id } }">
-            <img :src="getImage(product.image)" class="product-image" alt="Product Image" />
-          </NuxtLink>
+        <div v-for="product in products" :key="product.id" class="product-card">
+          <img
+            :src="`/assets/images/${product.image}`"
+            alt="Product Image"
+            class="product-image"
+          />
           <h2>{{ product.name }}</h2>
           <p>{{ product.price }} Tg</p>
-          <button @click="addToCart(product)">Add to Cart</button>
+          <button
+            @click="toggleCart(product)"
+            :class="{ 'in-cart': isInCart(product.id) }"
+          >
+            {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
+          </button>
         </div>
-      </div>
-  
-      <!-- Pagination -->
-      <div class="pagination-buttons">
-        <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
       </div>
     </div>
   </template>
   
   <script setup>
-  import { useProductStore } from '~/stores/productStore';
+  import { computed } from "vue";
+  import { useProductStore } from "~/stores/productStore";
   
+  // Access the Pinia product store
   const productStore = useProductStore();
   
-  const currentPage = ref(1);
-  const itemsPerPage = 6;
+  // Get the list of products
+  const products = computed(() => productStore.products);
   
-  const filteredProducts = computed(() => productStore.products);
-  
-  const totalPages = computed(() => Math.ceil(filteredProducts.value.length / itemsPerPage));
-  const paginatedProducts = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage;
-    return filteredProducts.value.slice(start, start + itemsPerPage);
-  });
-  
-  const prevPage = () => {
-    if (currentPage.value > 1) {
-      currentPage.value--;
+  // Toggle the product in and out of the cart
+  const toggleCart = (product) => {
+    if (productStore.isInCart(product.id)) {
+      productStore.removeFromCart(product.id);
+    } else {
+      productStore.addToCart(product);
     }
   };
   
-  const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-      currentPage.value++;
-    }
-  };
-  
-  const addToCart = (product) => {
-    productStore.addToCart(product);
-  };
-  
-  const getImage = (imageName) => {
-    return `/assets/images/${imageName}`;
-  };
+  // Check if the product is already in the cart
+  const isInCart = (productId) => productStore.isInCart(productId);
   </script>
   
   <style scoped>
@@ -69,64 +54,74 @@
   
   .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
   }
   
   .product-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 15px;
-    margin: 20px;
-    width: 300px;
-    background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
   }
   
   .product-card:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px);
   }
   
   .product-image {
-    max-width: 100%;
+    width: 100%;
     height: auto;
-    margin-bottom: 15px;
+    max-height: 150px;
+    object-fit: cover;
     border-radius: 8px;
+    margin-bottom: 15px;
   }
   
-  .pagination-buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+  h1 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 20px;
   }
   
-  .pagination-buttons button {
-    background-color: #361c59;
+  h2 {
+    font-size: 20px;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  button {
+    background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px 20px;
-    margin: 0 5px;
-    border-radius: 30px;
+    padding: 10px 15px;
     font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
   
-  .pagination-buttons button:disabled {
-    background-color: #5c4b83;
-    cursor: not-allowed;
+  button:hover {
+    background-color: #0056b3;
   }
   
-  .pagination-buttons button:not(:disabled):hover {
-    background-color: #3700b3;
+  button.in-cart {
+    background-color: #ff0000;
+  }
+  
+  button.in-cart:hover {
+    background-color: #cc0000;
   }
   </style>
   

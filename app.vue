@@ -48,6 +48,7 @@
 <script setup>
 import { computed } from "vue";
 import { useUserStore } from "~/stores/userStore";
+import { useProductStore } from "~/stores/productStore";
 
 const userStore = useUserStore();
 const isAuthenticated = computed(() => userStore.isAuthenticated);
@@ -56,6 +57,13 @@ const isAuthenticated = computed(() => userStore.isAuthenticated);
 const logout = () => {
   userStore.logout();
 };
+
+const productStore = useProductStore();
+
+onMounted(() => {
+  // Initialize the cart after the client-side mounts
+  productStore.initializeCart();
+});
 </script>
 
 <style scoped>

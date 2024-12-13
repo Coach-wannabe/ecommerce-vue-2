@@ -100,61 +100,53 @@ export const useProductStore = defineStore('productStore', {
             image: "camera.jpg",
           },
     ],
-    cart: [], // Initialize as empty; we'll load from localStorage on the client
+    cart: [], // Persist cart in localStorage
   }),
 
-  getters: {
-    cartTotal(state) {
-      return state.cart
-        .reduce((sum, item) => sum + item.price * item.quantity, 0)
-        .toFixed(3);
-    },
-    totalItems(state) {
-      return state.cart.reduce((sum, item) => sum + item.quantity, 0);
-    },
-  },
-
   actions: {
-    loadCartFromLocalStorage() {
+    initializeCart() {
       if (process.client) {
-        const storedCart = localStorage.getItem('cart');
-        if (storedCart) {
-          this.cart = JSON.parse(storedCart);
+        // Only run this on the client-side
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+          this.cart = JSON.parse(savedCart);
         }
       }
     },
-
-    saveCartToLocalStorage() {
-      if (process.client) {
-        localStorage.setItem('cart', JSON.stringify(this.cart));
-      }
-    },
-
     addToCart(product) {
       const existingItem = this.cart.find((item) => item.id === product.id);
-      if (existingItem) {
-        existingItem.quantity++;
-      } else {
+      if (!existingItem) {
         this.cart.push({ ...product, quantity: 1 });
+        this.saveCart();
       }
-      this.saveCartToLocalStorage();
     },
-
     removeFromCart(productId) {
-      const existingItem = this.cart.find((item) => item.id === productId);
-      if (existingItem) {
-        if (existingItem.quantity > 1) {
-          existingItem.quantity--;
-        } else {
-          this.cart = this.cart.filter((item) => item.id !== productId);
-        }
-        this.saveCartToLocalStorage();
+      this.cart = this.cart.filter((item) => item.id !== productId);
+      this.saveCart();
+    },
+    updateQuantity(productId, quantity) {
+      const item = this.cart.find((item) => item.id === productId);
+      if (item) {
+        item.quantity = quantity > 0 ? quantity : 1;
+        this.saveCart();
       }
     },
-
-    clearCart() {
-      this.cart = [];
-      this.saveCartToLocalStorage();
+    isInCart(productId) {
+      return this.cart.some((item) => item.id === productId);
+    },
+    saveCart() {
+      if (process.client) {
+        // Only save to localStorage on the client-side
+        localStorage.setItem("cart", JSON.stringify(this.cart));
+      }
+    },
+  },
+  getters: {
+    cartTotal() {
+      return this.cart.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      ).toFixed(2);
     },
   },
 });
