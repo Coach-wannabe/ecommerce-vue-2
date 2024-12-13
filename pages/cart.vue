@@ -1,185 +1,200 @@
 <template>
     <div class="cart-page">
       <h1>Your Shopping Cart</h1>
-      <div v-if="cart.length > 0">
-        <div v-for="item in cart" :key="item.id" class="cart-item">
-          <img
-            :src="`/assets/images/${item.image}`"
-            alt="Product Image"
-            class="cart-item-image"
-          />
+  
+      <!-- Check if cart is empty -->
+      <div v-if="cartItems.length === 0" class="empty-cart">
+        <p>Your cart is empty. Start shopping!</p>
+      </div>
+  
+      <!-- Cart Items -->
+      <div v-else>
+        <div class="cart-item" v-for="item in cartItems" :key="item.id">
+          <img :src="`/assets/images/${item.image}`" class="cart-item-image" alt="Product image" />
           <div class="cart-item-details">
-            <h3 class="product-name">{{ item.name }}</h3>
-            <p class="product-price">Price: {{ item.price }} Tg</p>
-            <div class="quantity-wrapper">
-              <label for="quantity">Quantity:</label>
-              <input
-                type="number"
-                v-model.number="item.quantity"
-                @input="updateQuantity(item.id, item.quantity)"
-                min="1"
-                class="quantity-input"
-              />
+            <h3>{{ item.name }}</h3>
+            <p>Price: {{ item.price }} Tg</p>
+            <div class="quantity-control">
+              <button @click="decreaseQuantity(item)">-</button>
+              <input type="number" v-model.number="item.quantity" @change="updateQuantity(item)" />
+              <button @click="increaseQuantity(item)">+</button>
             </div>
-            <p class="item-total">
-              Total: {{ (item.price * item.quantity).toFixed(2) }} Tg
-            </p>
-            <button @click="removeFromCart(item.id)" class="remove-btn">
-              Remove
-            </button>
+            <button @click="removeFromCart(item.id)" class="remove-btn">Remove</button>
           </div>
         </div>
+  
+        <!-- Cart Summary -->
         <div class="cart-summary">
-          <h2>Total: {{ cartTotal }} Tg</h2>
-          <button class="checkout-btn" @click="goToCheckout">
-            Proceed to Checkout
-          </button>
+          <p>Total Price: {{ cartTotal }} Tg</p>
+          <button class="checkout-btn" @click="proceedToCheckout">Proceed to Checkout</button>
         </div>
-      </div>
-      <div v-else>
-        <p>Your cart is empty.</p>
       </div>
     </div>
   </template>
   
   <script setup>
   import { computed } from "vue";
-  import { useRouter } from "vue-router";
+  import { useToast } from "vue-toastification";
   import { useProductStore } from "~/stores/productStore";
   
-  // Access the product store
+  // Toast setup
+  const toast = useToast();
+  
+  // Product store setup
   const productStore = useProductStore();
-  const cart = computed(() => productStore.cart);
+  const cartItems = computed(() => productStore.cart);
   const cartTotal = computed(() => productStore.cartTotal);
   
-  // Update item quantity
-  const updateQuantity = (productId, quantity) => {
-    productStore.updateQuantity(productId, quantity);
-  };
-  
-  // Remove item from cart
+  // Methods
   const removeFromCart = (productId) => {
+    const product = cartItems.value.find((item) => item.id === productId);
     productStore.removeFromCart(productId);
+    toast.info(`${product.name} removed from the cart.`);
   };
   
-  // Router instance for navigation
-  const router = useRouter();
-  const goToCheckout = () => {
-    router.push("/checkout");
+  const increaseQuantity = (item) => {
+    productStore.updateQuantity(item.id, item.quantity + 1);
+    toast.success(`Increased quantity of ${item.name}.`);
+  };
+  
+  const decreaseQuantity = (item) => {
+    if (item.quantity > 1) {
+      productStore.updateQuantity(item.id, item.quantity - 1);
+      toast.info(`Decreased quantity of ${item.name}.`);
+    } else {
+      removeFromCart(item.id);
+    }
+  };
+  
+  const updateQuantity = (item) => {
+    if (item.quantity < 1) {
+      removeFromCart(item.id);
+    } else {
+      productStore.updateQuantity(item.id, item.quantity);
+      toast.success(`${item.name} quantity updated.`);
+    }
+  };
+  
+  const proceedToCheckout = () => {
+    toast.success("Proceeding to checkout!");
+    // Redirect to checkout page (assumes routing is configured)
+    navigateTo("/checkout");
   };
   </script>
   
   <style scoped>
   .cart-page {
-    padding: 40px;
-    background-color: #f5f5f5;
+    padding: 20px;
+    background-color: #f9f9f9;
   }
   
   h1 {
-    font-size: 36px;
-    color: #333;
-    margin-bottom: 20px;
     text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .empty-cart {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #666;
   }
   
   .cart-item {
     display: flex;
-    align-items: flex-start;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 12px;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: white;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
   }
   
   .cart-item-image {
     width: 100px;
-    margin-right: 20px;
+    height: auto;
     border-radius: 8px;
+    margin-right: 20px;
   }
   
   .cart-item-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    flex-grow: 1;
   }
   
-  .product-name {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
+  .cart-item-details h3 {
+    margin: 0;
+    font-size: 18px;
   }
   
-  .product-price,
-  .item-total {
-    font-size: 16px;
-    color: #666;
-    margin-top: 10px;
+  .cart-item-details p {
+    margin: 5px 0;
+    color: #555;
   }
   
-  .quantity-wrapper {
+  .quantity-control {
     display: flex;
     align-items: center;
-    margin-top: 10px;
+    margin: 10px 0;
   }
   
-  .quantity-wrapper label {
-    margin-right: 10px;
-    font-size: 14px;
+  .quantity-control button {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
   }
   
-  .quantity-input {
-    width: 60px;
-    padding: 5px;
-    font-size: 14px;
+  .quantity-control button:hover {
+    background: #0056b3;
+  }
+  
+  .quantity-control input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 0 10px;
   }
   
   .remove-btn {
-    background-color: #ff5722;
+    background: #ff0000;
     color: white;
-    padding: 10px 15px;
     border: none;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 10px;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
+    font-size: 14px;
   }
   
   .remove-btn:hover {
-    background-color: #e64a19;
+    background: #cc0000;
   }
   
   .cart-summary {
     margin-top: 20px;
     text-align: right;
-  }
-  
-  .cart-summary h2 {
-    font-size: 24px;
+    font-size: 18px;
     font-weight: bold;
-    color: #333;
   }
   
   .checkout-btn {
-    background-color: #6200ea;
+    background: #007bff;
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    margin-top: 10px;
   }
   
   .checkout-btn:hover {
-    background-color: #3700b3;
-  }
-  
-  p {
-    text-align: center;
-    font-size: 18px;
-    color: #555;
+    background: #0056b3;
   }
   </style>
   

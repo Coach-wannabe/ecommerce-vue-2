@@ -47,32 +47,37 @@
   
   <script setup>
   import { ref, computed } from "vue";
+  import { useToast } from "vue-toastification";
   import { useProductStore } from "~/stores/productStore";
   
-  const productStore = useProductStore();
-  const selectedCategory = computed(() => productStore.selectedCategory);
-  const categories = ["Laptops", "Smartphones & Tablets", "Appliances", "Accessories", "Electronics"];
+  // Toast notification setup
+  const toast = useToast();
   
+  // Pinia store setup
+  const productStore = useProductStore();
+  
+  // Pagination setup
   const productsPerPage = 6; // Number of products per page
   const currentPage = ref(1);
   
-  // Products for the current page
+  // Categories for filtering
+  const categories = ["Laptops", "Smartphones & Tablets", "Appliances", "Accessories", "Electronics"];
+  
+  // Computed properties
+  const selectedCategory = computed(() => productStore.selectedCategory);
   const paginatedProducts = computed(() => {
     const start = (currentPage.value - 1) * productsPerPage;
     const end = start + productsPerPage;
     return productStore.filteredProducts.slice(start, end);
   });
-  
-  // Total number of pages
   const totalPages = computed(() => Math.ceil(productStore.filteredProducts.length / productsPerPage));
   
-  // Handle category filtering
+  // Methods
   const filterByCategory = (category) => {
     productStore.filterByCategory(category);
-    currentPage.value = 1; // Reset to first page when category changes
+    currentPage.value = 1; // Reset to first page on category change
   };
   
-  // Handle pagination
   const nextPage = () => {
     if (currentPage.value < totalPages.value) currentPage.value++;
   };
@@ -81,16 +86,16 @@
     if (currentPage.value > 1) currentPage.value--;
   };
   
-  // Add or remove product from cart
   const addToCart = (product) => {
     if (productStore.isInCart(product.id)) {
       productStore.removeFromCart(product.id);
+      toast.info(`${product.name} removed from the cart.`);
     } else {
       productStore.addToCart(product);
+      toast.success(`${product.name} added to the cart!`);
     }
   };
   
-  // Check if a product is in the cart
   const isInCart = (productId) => productStore.isInCart(productId);
   </script>
   
@@ -192,6 +197,14 @@
   
   button:hover {
     background-color: #0056b3;
+  }
+  
+  button.in-cart {
+    background-color: #ff0000;
+  }
+  
+  button.in-cart:hover {
+    background-color: #cc0000;
   }
   
   /* Pagination Controls */

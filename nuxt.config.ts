@@ -24,6 +24,5 @@ export default defineNuxtConfig({
     clearScreen: false,
   },
 
-  // Remove the following line
-  // plugins: ["~/plugins/initCart.client.js"],
+  plugins: ["~/plugins/toast.js"],
 });

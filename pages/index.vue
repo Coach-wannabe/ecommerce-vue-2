@@ -19,22 +19,26 @@
   
   <script setup>
   import { computed } from "vue";
+  import { useToast } from "vue-toastification";
   import { useProductStore } from "~/stores/productStore";
   
-  // Access the product store
+  // Initialize toast
+  const toast = useToast();
   const productStore = useProductStore();
   
-  // Select 3 random featured products
+  // Get 3 random featured products
   const featuredProducts = computed(() => {
     return productStore.products.sort(() => Math.random() - 0.5).slice(0, 3);
   });
   
-  // Add or remove product from the cart
+  // Add or remove product from the cart with toast notifications
   const addToCart = (product) => {
     if (productStore.isInCart(product.id)) {
       productStore.removeFromCart(product.id);
+      toast.info(`${product.name} removed from the cart.`);
     } else {
       productStore.addToCart(product);
+      toast.success(`${product.name} added to the cart!`);
     }
   };
   
