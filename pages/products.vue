@@ -1,8 +1,28 @@
 <template>
-    <div class="product-list-page">
-      <h1>Our Products</h1>
+    <div class="products-page">
+      <!-- Side Menu for Categories -->
+      <aside class="side-menu">
+        <ul>
+          <li
+            @click="filterByCategory('All')"
+            :class="{ active: selectedCategory === 'All' }"
+          >
+            All
+          </li>
+          <li
+            v-for="category in categories"
+            :key="category"
+            @click="filterByCategory(category)"
+            :class="{ active: selectedCategory === category }"
+          >
+            {{ category }}
+          </li>
+        </ul>
+      </aside>
+  
+      <!-- Product Grid -->
       <div class="product-grid">
-        <div v-for="product in products" :key="product.id" class="product-card">
+        <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
           <img
             :src="`/assets/images/${product.image}`"
             alt="Product Image"
@@ -10,29 +30,59 @@
           />
           <h2>{{ product.name }}</h2>
           <p>{{ product.price }} Tg</p>
-          <button
-            @click="toggleCart(product)"
-            :class="{ 'in-cart': isInCart(product.id) }"
-          >
+          <button @click="addToCart(product)">
             {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
           </button>
         </div>
+      </div>
+  
+      <!-- Pagination Controls -->
+      <div class="pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
       </div>
     </div>
   </template>
   
   <script setup>
-  import { computed } from "vue";
+  import { ref, computed } from "vue";
   import { useProductStore } from "~/stores/productStore";
   
-  // Access the Pinia product store
   const productStore = useProductStore();
+  const selectedCategory = computed(() => productStore.selectedCategory);
+  const categories = ["Laptops", "Smartphones & Tablets", "Appliances", "Accessories", "Electronics"];
   
-  // Get the list of products
-  const products = computed(() => productStore.products);
+  const productsPerPage = 6; // Number of products per page
+  const currentPage = ref(1);
   
-  // Toggle the product in and out of the cart
-  const toggleCart = (product) => {
+  // Products for the current page
+  const paginatedProducts = computed(() => {
+    const start = (currentPage.value - 1) * productsPerPage;
+    const end = start + productsPerPage;
+    return productStore.filteredProducts.slice(start, end);
+  });
+  
+  // Total number of pages
+  const totalPages = computed(() => Math.ceil(productStore.filteredProducts.length / productsPerPage));
+  
+  // Handle category filtering
+  const filterByCategory = (category) => {
+    productStore.filterByCategory(category);
+    currentPage.value = 1; // Reset to first page when category changes
+  };
+  
+  // Handle pagination
+  const nextPage = () => {
+    if (currentPage.value < totalPages.value) currentPage.value++;
+  };
+  
+  const prevPage = () => {
+    if (currentPage.value > 1) currentPage.value--;
+  };
+  
+  // Add or remove product from cart
+  const addToCart = (product) => {
     if (productStore.isInCart(product.id)) {
       productStore.removeFromCart(product.id);
     } else {
@@ -40,28 +90,62 @@
     }
   };
   
-  // Check if the product is already in the cart
+  // Check if a product is in the cart
   const isInCart = (productId) => productStore.isInCart(productId);
   </script>
   
   <style scoped>
-  .product-list-page {
+  .products-page {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    gap: 20px;
     padding: 20px;
   }
   
+  /* Side Menu */
+  .side-menu {
+    width: 200px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .side-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .side-menu li {
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background-color: #ffffff;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .side-menu li.active {
+    font-weight: bold;
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .side-menu li:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  /* Product Grid */
   .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    width: 100%;
-    max-width: 1200px;
+    flex-grow: 1;
   }
   
   .product-card {
-    background-color: #fff;
+    background-color: white;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 15px;
@@ -79,19 +163,13 @@
     height: auto;
     max-height: 150px;
     object-fit: cover;
-    border-radius: 8px;
     margin-bottom: 15px;
-  }
-  
-  h1 {
-    font-size: 32px;
-    color: #333;
-    margin-bottom: 20px;
+    border-radius: 8px;
   }
   
   h2 {
-    font-size: 20px;
-    color: #444;
+    font-size: 18px;
+    color: #333;
     margin-bottom: 10px;
   }
   
@@ -116,12 +194,39 @@
     background-color: #0056b3;
   }
   
-  button.in-cart {
-    background-color: #ff0000;
+  /* Pagination Controls */
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
   }
   
-  button.in-cart:hover {
-    background-color: #cc0000;
+  .pagination button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pagination button:disabled {
+    background-color: #dcdcdc;
+    color: #8c8c8c;
+    cursor: not-allowed;
+  }
+  
+  .pagination button:hover:not(:disabled) {
+    background-color: #0056b3;
+  }
+  
+  .pagination span {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
   }
   </style>
   
