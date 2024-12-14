@@ -1,24 +1,5 @@
 <template>
     <div class="products-page">
-      <!-- Side Menu for Categories -->
-      <aside class="side-menu">
-        <ul>
-          <li
-            @click="filterByCategory('All')"
-            :class="{ active: selectedCategory === 'All' }"
-          >
-            All
-          </li>
-          <li
-            v-for="category in categories"
-            :key="category"
-            @click="filterByCategory(category)"
-            :class="{ active: selectedCategory === category }"
-          >
-            {{ category }}
-          </li>
-        </ul>
-      </aside>
   
       <!-- Product Grid -->
       <div class="product-grid">
@@ -63,7 +44,7 @@
   
   // Categories for filtering
   const categories = ["Laptops", "Smartphones & Tablets", "Appliances", "Accessories", "Electronics"];
-  
+
   // Computed properties
   const selectedCategory = computed(() => productStore.selectedCategory);
   const paginatedProducts = computed(() => {
@@ -72,12 +53,7 @@
     return productStore.filteredProducts.slice(start, end);
   });
   const totalPages = computed(() => Math.ceil(productStore.filteredProducts.length / productsPerPage));
-  
-  // Methods
-  const filterByCategory = (category) => {
-    productStore.filterByCategory(category);
-    currentPage.value = 1; // Reset to first page on category change
-  };
+
   
   const nextPage = () => {
     if (currentPage.value < totalPages.value) currentPage.value++;

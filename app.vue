@@ -2,6 +2,7 @@
   <div class="app-container">
     <!-- Navigation -->
     <header class="navbar">
+      <NuxtLayout/>
       <nav class="nav-links">
         <a href="/" class="nav-link">Home</a>
         <a href="/products" class="nav-link">Products</a>
