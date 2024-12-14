@@ -24,6 +24,17 @@
       </nav>
     </header>
 
+    <header class="navbar">
+  <button class="nav-toggle" @click="toggleMenu">☰</button>
+  <nav class="nav-links" :class="{ open: menuOpen }">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/products" class="nav-link">Products</a>
+    <a href="/cart" class="nav-link">Cart</a>
+    <a v-if="!isAuthenticated" href="/login" class="nav-link">Login</a>
+    <a v-if="isAuthenticated" href="#" @click.prevent="logout" class="nav-link">Logout</a>
+  </nav>
+</header>
+
     <!-- Main Content -->
     <main class="content">
       <NuxtPage />
@@ -74,22 +85,27 @@ const productStore = useProductStore();
 onMounted(() => {
   productStore.initializeCart();
 });
+
+const menuOpen = ref(false);
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value;
+};
 </script>
 
 <style scoped>
-/* App Container for Sticky Footer Behavior */
+
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Full viewport height */
+  min-height: 100vh;
 }
 
 .content {
-  flex-grow: 1; /* Pushes footer to the bottom when content is small */
+  flex-grow: 1;
   margin-top: 60px;
 }
 
-/* Navigation Bar */
+
 .navbar {
   background-color: #007bff;
   color: white;
@@ -120,16 +136,14 @@ onMounted(() => {
   color: #ffcc00;
 }
 
-/* Footer Styling */
+
 .footer {
-  background-color: #333; /* Dark gray */
+  background-color: #333;
   color: white;
   text-align: center;
   padding: 20px;
   font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* Space between sections */
+  flex-shrink: 0;
 }
 
 .footer-content {
@@ -139,14 +153,14 @@ onMounted(() => {
   gap: 20px;
 }
 
-/* Footer Sections */
+
 .footer-section {
   margin: 10px 0;
 }
 
-/* Social Media Links */
+
 .social-links a {
-  color: #ffcc00; /* Golden color */
+  color: #ffcc00;
   margin: 0 10px;
   font-weight: bold;
   text-decoration: none;
@@ -158,7 +172,7 @@ onMounted(() => {
   text-decoration: underline;
 }
 
-/* Additional Links */
+
 .extra-links a {
   color: #ffcc00;
   margin: 0 10px;
@@ -172,22 +186,69 @@ onMounted(() => {
   text-decoration: underline;
 }
 
-/* Copyright Section */
+
 .copyright {
   font-size: 12px;
   color: #aaa;
 }
 
-/* Responsive Design */
+.content {
+  padding: 20px;
+  flex-grow: 1;
+  margin-top: 60px;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
 @media (max-width: 768px) {
-  .footer-content {
-    flex-direction: column; /* Stack items vertically */
-    text-align: center;
-    gap: 20px;
+  .navbar {
+    justify-content: space-between;
+    padding: 10px;
   }
 
-  .footer-section {
-    margin: 0;
+  .nav-toggle {
+    display: block;
+  }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background-color: #007bff;
+    padding: 20px;
+  }
+  .nav-links.open {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 10px;
+  }
+
+  .footer {
+    padding: 15px;
+  }
+
+  .social-links a, .extra-links a {
+    margin: 5px;
+    display: block;
   }
 }
 </style>

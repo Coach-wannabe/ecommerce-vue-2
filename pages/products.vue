@@ -108,22 +108,26 @@ const isInCart = (productId) => productStore.isInCart(productId);
 </script>
 
 <style scoped>
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .products-page {
   display: flex;
   gap: 20px;
   padding: 20px;
+  min-height: 100vh;
 }
 
 .product-section {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
 }
 
 .product-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
   flex-grow: 1;
 }
 
@@ -185,9 +189,9 @@ button.in-cart:hover {
 }
 
 .pagination {
-  margin-top: 20px;
+  margin-top: auto;
   display: flex;
-  justify-content: center; /* Центрируем пагинацию */
+  justify-content: center;
   align-items: center;
   gap: 20px;
   width: 100%;
@@ -277,6 +281,29 @@ button.in-cart:hover {
 
 .phone-model-buttons button:hover {
   background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .products-page {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .side-menu {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
 }
 
 </style>
