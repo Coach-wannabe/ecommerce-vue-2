@@ -5,19 +5,23 @@
 
     <div class="product-grid">
       <div v-for="product in featuredProducts" :key="product.id" class="product-card">
-        <div class="product-card-content">
+        <!-- Image as clickable link -->
+        <router-link :to="`/product/${product.id}`" class="product-card-content">
           <img :src="`/assets/images/${product.image}`" class="product-image" alt="Product image" />
-        </div>
-        <div class="product-info">
+        </router-link>
+
+        <!-- Product Name as clickable link -->
+        <router-link :to="`/product/${product.id}`" class="product-info">
           <h2 class="product-name">{{ product.name }}</h2>
-          <p class="product-price">{{ product.price }} Tg</p>
-          <button
-            :class="buttonClass(product.id)"
-            @click="toggleCart(product)"
-          >
-            {{ buttonText(product.id) }}
-          </button>
-        </div>
+        </router-link>
+
+        <p class="product-price">{{ product.price }} Tg</p>
+        <button
+          :class="buttonClass(product.id)"
+          @click="toggleCart(product)"
+        >
+          {{ buttonText(product.id) }}
+        </button>
       </div>
     </div>
   </div>
@@ -116,6 +120,7 @@ const buttonClass = (productId) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer; /* Pointer cursor for image */
 }
 
 .product-image {
@@ -132,6 +137,7 @@ const buttonClass = (productId) => {
   align-items: center;
   gap: 10px;
   margin-top: auto;
+  cursor: pointer; /* Pointer cursor for name */
 }
 
 /* Product Name */
@@ -139,6 +145,11 @@ const buttonClass = (productId) => {
   font-size: 20px;
   font-weight: bold;
   color: #333;
+  transition: color 0.3s ease;
+}
+
+.product-name:hover {
+  color: #007bff; /* Highlight color on hover */
 }
 
 /* Product Price */
