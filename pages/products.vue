@@ -40,6 +40,7 @@
           <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
           <h2>{{ product.name }}</h2>
           <p>{{ product.price }} Tg</p>
+          <star-rating :rating="product.rating"></star-rating>
           <button @click="addToCart(product)">
             {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
           </button>
@@ -279,4 +280,8 @@ button.in-cart:hover {
   background-color: #0056b3;
 }
 
+.star-rating{
+  display: flex;
+  justify-content: center;
+}
 </style>
