@@ -97,18 +97,22 @@ const isInCart = (productId) => productStore.isInCart(productId);
 }
 
 .phone-model-buttons button {
-  padding: 8px 12px;
-  font-size: 14px;
-  background-color: #f0f0f0;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #007bff;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  color: white;
+  border-radius: 5px;
   transition: background-color 0.3s ease;
 }
 
 .phone-model-buttons button.active {
-  background-color: #4CAF50;
-  color: white;
+  background-color: #0056b3;
+}
+
+.phone-model-buttons button:hover {
+  background-color: #0056b3;
 }
 
 .product-grid {
