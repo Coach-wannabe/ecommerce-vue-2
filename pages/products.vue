@@ -2,38 +2,51 @@
   <div class="products-page">
     <aside class="side-menu">
       <ul>
-        <li @click="filterByCategory('All')" :class="{ active: selectedCategory === 'All' }">
+        <li
+          @click="filterByCategory('All')"
+          :class="{ active: selectedCategory === 'All' }"
+        >
           All
         </li>
-        <li v-for="category in categories" :key="category" @click="filterByCategory(category)" :class="{ active: selectedCategory === category }">
+        <li
+          v-for="category in categories"
+          :key="category"
+          @click="filterByCategory(category)"
+          :class="{ active: selectedCategory === category }"
+        >
           {{ category }}
         </li>
       </ul>
     </aside>
+
     <div class="product-section">
-      <div class="product-grid">
-        <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
-          <!-- Link Image to Product Details -->
-          <router-link :to="`/product/${product.id}`">
-            <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
-          </router-link>
-          
-          <!-- Link Name to Product Details -->
-          <router-link :to="`/product/${product.id}`" class="product-name">
-            <h2>{{ product.name }}</h2>
-          </router-link>
-          
-          <p>{{ product.price }} Tg</p>
-          <button @click="addToCart(product)">
-            {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
-          </button>
-        </div>
+      <!-- Фильтр для выбора модели телефона -->
+      <div v-if="selectedCategory === 'Smartphones'" class="phone-model-buttons">
+        <button
+          v-for="model in phoneModels"
+          :key="model"
+          @click="filterByPhoneModel(model)"
+          :class="{ active: selectedPhoneModel === model }"
+        >
+          {{ model }}
+        </button>
       </div>
-      <div class="pagination">
-        <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+
+      <!-- Продукты, которые отображаются в зависимости от выбранной категории и модели -->
+      <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
+        <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.price }} Tg</p>
+        <button @click="addToCart(product)">
+          {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
+        </button>
       </div>
+    </div>
+
+    <div class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
   </div>
 </template>
@@ -48,10 +61,16 @@ const productStore = useProductStore();
 
 const productsPerPage = 6;
 const currentPage = ref(1);
+<<<<<<< Updated upstream
 
 const categories = ["Laptops", "Smartphones", "Tablets", "Appliances", "Accessories", "Electronics"];
+=======
+const categories = ["Laptops", "Smartphones", "Tablets", "Appliances", "Electronics"];
+const phoneModels = ["Apple", "Samsung", "Xiaomi", "Huawei", "Vivo"]; // Модели телефонов
+>>>>>>> Stashed changes
 
 const selectedCategory = computed(() => productStore.selectedCategory);
+const selectedPhoneModel = computed(() => productStore.selectedPhoneModel);
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * productsPerPage;
   const end = start + productsPerPage;
@@ -62,6 +81,10 @@ const totalPages = computed(() => Math.ceil(productStore.filteredProducts.length
 const filterByCategory = (category) => {
   productStore.filterByCategory(category);
   currentPage.value = 1;
+};
+
+const filterByPhoneModel = (model) => {
+  productStore.filterByPhoneModel(model);
 };
 
 const nextPage = () => {
@@ -90,6 +113,9 @@ const isInCart = (productId) => productStore.isInCart(productId);
   display: flex;
   gap: 20px;
   padding: 20px;
+  width: 100%;
+  justify-content: space-between; /* Элементы будут выровнены по всей ширине */
+  flex-wrap: wrap; /* Позволяет элементам переходить на новую строку */
 }
 
 .side-menu {
@@ -126,23 +152,15 @@ const isInCart = (productId) => productStore.isInCart(productId);
   color: white;
 }
 
-.product-section {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Адаптивная сетка, минимальная ширина 200px */
   gap: 20px;
   flex-grow: 1;
+  width: 100%;
 }
 
 .product-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   background-color: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -165,16 +183,15 @@ const isInCart = (productId) => productStore.isInCart(productId);
   border-radius: 8px;
 }
 
-.product-name h2 {
+h2 {
   font-size: 18px;
   color: #333;
   margin-bottom: 10px;
-  cursor: pointer;
-  transition: color 0.3s ease;
 }
 
-.product-name:hover h2 {
-  color: #007bff;
+p {
+  font-size: 16px;
+  color: #666;
 }
 
 button {
@@ -193,14 +210,42 @@ button:hover {
   background-color: #0056b3;
 }
 
-.pagination {
+button.in-cart {
+  background-color: #ff0000;
+}
+
+button.in-cart:hover {
+  background-color: #cc0000;
+}
+
+.phone-model-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
   margin-top: 20px;
+}
+
+.phone-model-buttons button {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.phone-model-buttons button.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.pagination {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 20px;
-  width: 100%;
   padding-top: 10px;
+  margin-top: 20px;
+  width: 100%;
 }
 
 .pagination button {
@@ -228,4 +273,5 @@ button:hover {
   font-weight: bold;
   color: #333;
 }
+
 </style>
