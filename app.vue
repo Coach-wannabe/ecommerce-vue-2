@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <!-- Navigation -->
     <header class="navbar">
       <nav class="nav-links">
@@ -25,35 +25,46 @@
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main class="content">
       <NuxtPage />
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-      <div class="social-links">
-        <a href="https://twitter.com/login" target="_blank">Twitter</a>
-        <a href="https://instagram.com/accounts/login/" target="_blank">Instagram</a>
-        <a href="https://facebook.com/login" target="_blank">Facebook</a>
-        <a href="https://linkedin.com/login" target="_blank">LinkedIn</a>
-      </div>
-      <div class="footer-links">
-        <a href="/terms">Terms of Service</a>
-        <a href="/privacy">Privacy Policy</a>
+      <div class="footer-content">
+        <!-- Social Media Links -->
+        <div class="footer-section social-links">
+          <a href="https://twitter.com/login" target="_blank" rel="noopener">Twitter</a>
+          <a href="https://instagram.com/accounts/login/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://facebook.com/login" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://linkedin.com/login" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+
+        <!-- Additional Links -->
+        <div class="footer-section extra-links">
+          <a href="/about">About Us</a>
+          <a href="/contact">Contact Us</a>
+          <a href="/terms" target="_blank" rel="noopener">Terms of Service</a>
+          <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-section copyright">
+          © 2024 Your Company. All rights reserved.
+        </div>
       </div>
     </footer>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useUserStore } from "~/stores/userStore";
 import { useProductStore } from "~/stores/productStore";
 
 const userStore = useUserStore();
 const isAuthenticated = computed(() => userStore.isAuthenticated);
 
-// Handle logout
 const logout = () => {
   userStore.logout();
 };
@@ -61,21 +72,20 @@ const logout = () => {
 const productStore = useProductStore();
 
 onMounted(() => {
-  // Initialize the cart after the client-side mounts
   productStore.initializeCart();
 });
 </script>
 
 <style scoped>
-/* General Layout */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+/* App Container for Sticky Footer Behavior */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
 }
 
-main {
-  min-height: 80vh;
-  padding: 20px;
+.content {
+  flex-grow: 1; /* Pushes footer to the bottom when content is small */
 }
 
 /* Navigation Bar */
@@ -98,31 +108,83 @@ main {
   text-decoration: none;
   font-weight: bold;
   text-transform: uppercase;
-  transition: color 0.3s;
+  transition: color 0.3s ease;
 }
 
 .nav-link:hover {
   color: #ffcc00;
 }
 
-/* Footer */
+/* Footer Styling */
 .footer {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  background-color: #333;
+  background-color: #333; /* Dark gray */
   color: white;
-  padding: 20px;
   text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between sections */
 }
 
-.footer a {
-  color: #ffcc00;
-  text-decoration: none;
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Footer Sections */
+.footer-section {
+  margin: 10px 0;
+}
+
+/* Social Media Links */
+.social-links a {
+  color: #ffcc00; /* Golden color */
   margin: 0 10px;
   font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.footer a:hover {
+.social-links a:hover {
+  color: #ffffff;
   text-decoration: underline;
+}
+
+/* Additional Links */
+.extra-links a {
+  color: #ffcc00;
+  margin: 0 10px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.extra-links a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* Copyright Section */
+.copyright {
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column; /* Stack items vertically */
+    text-align: center;
+    gap: 20px;
+  }
+
+  .footer-section {
+    margin: 0;
+  }
 }
 </style>
