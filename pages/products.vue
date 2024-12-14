@@ -49,7 +49,7 @@ const productStore = useProductStore();
 const productsPerPage = 6;
 const currentPage = ref(1);
 
-const categories = ["Laptops", "Smartphones & Tablets", "Appliances", "Accessories", "Electronics"];
+const categories = ["Laptops", "Smartphones", "Tablets", "Appliances", "Accessories", "Electronics"];
 
 const selectedCategory = computed(() => productStore.selectedCategory);
 const paginatedProducts = computed(() => {
