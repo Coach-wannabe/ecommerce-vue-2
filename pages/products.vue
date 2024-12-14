@@ -2,15 +2,20 @@
   <div class="products-page">
     <aside class="side-menu">
       <ul>
-        <li @click="filterByCategory('All')" :class="{ active: selectedCategory === 'All' }">
-          All
-        </li>
+        <li @click="filterByCategory('All')" :class="{ active: selectedCategory === 'All' }">All</li>
         <li v-for="category in categories" :key="category" @click="filterByCategory(category)" :class="{ active: selectedCategory === category }">
           {{ category }}
         </li>
       </ul>
     </aside>
+
     <div class="product-section">
+      <div v-if="selectedCategory === 'Smartphones'" class="phone-model-buttons">
+        <button v-for="model in phoneModels" :key="model" @click="filterByPhoneModel(model)" :class="{ active: selectedPhoneModel === model }">
+          {{ model }}
+        </button>
+      </div>
+
       <div class="product-grid">
         <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
           <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
@@ -21,6 +26,7 @@
           </button>
         </div>
       </div>
+
       <div class="pagination">
         <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
@@ -40,10 +46,11 @@ const productStore = useProductStore();
 
 const productsPerPage = 6;
 const currentPage = ref(1);
-
-const categories = ["Laptops", "Smartphones & Tablets", "Appliances", "Accessories", "Electronics"];
+const categories = ["Laptops", "Smartphones", "Tablets", "Appliances", "Electronics"];
+const phoneModels = ["Apple", "Samsung", "Xiaomi", "Huawei", "Vivo"]; // Модели телефонов
 
 const selectedCategory = computed(() => productStore.selectedCategory);
+const selectedPhoneModel = computed(() => productStore.selectedPhoneModel);
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * productsPerPage;
   const end = start + productsPerPage;
@@ -54,6 +61,10 @@ const totalPages = computed(() => Math.ceil(productStore.filteredProducts.length
 const filterByCategory = (category) => {
   productStore.filterByCategory(category);
   currentPage.value = 1;
+};
+
+const filterByPhoneModel = (model) => {
+  productStore.filterByPhoneModel(model);
 };
 
 const nextPage = () => {
@@ -78,6 +89,47 @@ const isInCart = (productId) => productStore.isInCart(productId);
 </script>
 
 <style scoped>
+.phone-model-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  padding: 10px 0;
+}
+
+.phone-model-buttons button {
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.phone-model-buttons button.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
 .products-page {
   display: flex;
   gap: 20px;
@@ -147,9 +199,9 @@ const isInCart = (productId) => productStore.isInCart(productId);
 
 .product-image {
   width: 100%;
-  height: auto;
+  height: 200px;
   max-height: 150px;
-  object-fit: cover;
+  object-fit: contain;
   margin-bottom: 15px;
   border-radius: 8px;
 }
