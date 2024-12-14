@@ -20,7 +20,6 @@
     </aside>
 
     <div class="product-section">
-      <!-- Фильтр для выбора модели телефона -->
       <div v-if="selectedCategory === 'Smartphones'" class="phone-model-buttons">
         <button
           v-for="model in phoneModels"
@@ -32,21 +31,26 @@
         </button>
       </div>
 
-      <!-- Продукты, которые отображаются в зависимости от выбранной категории и модели -->
-      <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
-        <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
-        <h2>{{ product.name }}</h2>
-        <p>{{ product.price }} Tg</p>
-        <button @click="addToCart(product)">
-          {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
-        </button>
+      <div class="product-grid">
+        <div
+          v-for="product in paginatedProducts"
+          :key="product.id"
+          class="product-card"
+        >
+          <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
+          <h2>{{ product.name }}</h2>
+          <p>{{ product.price }} Tg</p>
+          <button @click="addToCart(product)">
+            {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div class="pagination">
-      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      <div class="pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      </div>
     </div>
   </div>
 </template>
@@ -61,13 +65,8 @@ const productStore = useProductStore();
 
 const productsPerPage = 6;
 const currentPage = ref(1);
-<<<<<<< Updated upstream
-
-const categories = ["Laptops", "Smartphones", "Tablets", "Appliances", "Accessories", "Electronics"];
-=======
 const categories = ["Laptops", "Smartphones", "Tablets", "Appliances", "Electronics"];
-const phoneModels = ["Apple", "Samsung", "Xiaomi", "Huawei", "Vivo"]; // Модели телефонов
->>>>>>> Stashed changes
+const phoneModels = ["Apple", "Samsung", "Xiaomi", "Huawei", "Vivo"];
 
 const selectedCategory = computed(() => productStore.selectedCategory);
 const selectedPhoneModel = computed(() => productStore.selectedPhoneModel);
@@ -113,51 +112,19 @@ const isInCart = (productId) => productStore.isInCart(productId);
   display: flex;
   gap: 20px;
   padding: 20px;
-  width: 100%;
-  justify-content: space-between; /* Элементы будут выровнены по всей ширине */
-  flex-wrap: wrap; /* Позволяет элементам переходить на новую строку */
 }
 
-.side-menu {
-  width: 200px;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.side-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.side-menu li {
-  padding: 10px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  background-color: #ffffff;
-  border-radius: 4px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.side-menu li.active {
-  font-weight: bold;
-  background-color: #007bff;
-  color: white;
-}
-
-.side-menu li:hover {
-  background-color: #007bff;
-  color: white;
+.product-section {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Адаптивная сетка, минимальная ширина 200px */
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   flex-grow: 1;
-  width: 100%;
 }
 
 .product-card {
@@ -176,9 +143,8 @@ const isInCart = (productId) => productStore.isInCart(productId);
 
 .product-image {
   width: 100%;
-  height: auto;
-  max-height: 150px;
-  object-fit: cover;
+  height: 200px;
+  object-fit: contain;
   margin-bottom: 15px;
   border-radius: 8px;
 }
@@ -218,34 +184,14 @@ button.in-cart:hover {
   background-color: #cc0000;
 }
 
-.phone-model-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-
-.phone-model-buttons button {
-  padding: 8px 16px;
-  font-size: 14px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.phone-model-buttons button.active {
-  background-color: #4CAF50;
-  color: white;
-}
-
 .pagination {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding-top: 10px;
   margin-top: 20px;
+  display: flex;
+  justify-content: center; /* Центрируем пагинацию */
+  align-items: center;
+  gap: 20px;
   width: 100%;
+  padding-top: 10px;
 }
 
 .pagination button {
@@ -272,6 +218,65 @@ button.in-cart:hover {
   font-size: 16px;
   font-weight: bold;
   color: #333;
+}
+
+.side-menu {
+  width: 200px;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.side-menu li {
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  background-color: #ffffff;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.side-menu li.active {
+  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+}
+
+.side-menu li:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.phone-model-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.phone-model-buttons button {
+  padding: 10px;
+  font-size: 14px;
+  background-color: #007bff; 
+  border: none;
+  cursor: pointer;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.phone-model-buttons button.active {
+  background-color: #0056b3;
+}
+
+.phone-model-buttons button:hover {
+  background-color: #0056b3;
 }
 
 </style>
