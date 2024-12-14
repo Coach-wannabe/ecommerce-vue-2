@@ -37,9 +37,22 @@
           :key="product.id"
           class="product-card"
         >
-          <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
-          <h2>{{ product.name }}</h2>
+          <!-- Clickable Product Image -->
+          <img
+            :src="`/assets/images/${product.image}`"
+            alt="Product Image"
+            class="product-image clickable"
+            @click="redirectToProduct(product.id)"
+          />
+          <!-- Clickable Product Name -->
+          <h2
+            class="product-name clickable"
+            @click="redirectToProduct(product.id)"
+          >
+            {{ product.name }}
+          </h2>
           <p>{{ product.price }} Tg</p>
+          <star-rating :rating="product.rating"></star-rating>
           <button @click="addToCart(product)">
             {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
           </button>
@@ -58,9 +71,11 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useToast } from "vue-toastification";
+import { useRouter } from "vue-router";
 import { useProductStore } from "~/stores/productStore";
 
 const toast = useToast();
+const router = useRouter();
 const productStore = useProductStore();
 
 const productsPerPage = 6;
@@ -105,6 +120,11 @@ const addToCart = (product) => {
 };
 
 const isInCart = (productId) => productStore.isInCart(productId);
+
+// Redirect to Product Details Page
+const redirectToProduct = (id) => {
+  router.push(`/product/${id}`);
+};
 </script>
 
 <style scoped>
@@ -153,10 +173,29 @@ html, body {
   border-radius: 8px;
 }
 
-h2 {
+.product-image.clickable {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.product-image.clickable:hover {
+  transform: scale(1.05);
+}
+
+.product-name {
   font-size: 18px;
   color: #333;
   margin-bottom: 10px;
+}
+
+.product-name.clickable {
+  cursor: pointer;
+  color: #007bff;
+  transition: color 0.3s ease;
+}
+
+.product-name.clickable:hover {
+  color: #0056b3;
 }
 
 p {
@@ -191,7 +230,11 @@ button.in-cart:hover {
 .pagination {
   margin-top: auto;
   display: flex;
+<<<<<<< HEAD
   justify-content: center;
+=======
+  justify-content: center; /* Center pagination */
+>>>>>>> 3a8aced76a061ea50aa40ef1a124155c9dabc3d4
   align-items: center;
   gap: 20px;
   width: 100%;
@@ -283,6 +326,7 @@ button.in-cart:hover {
   background-color: #0056b3;
 }
 
+<<<<<<< HEAD
 @media (max-width: 768px) {
   .products-page {
     flex-direction: column;
@@ -306,4 +350,10 @@ button.in-cart:hover {
   }
 }
 
+=======
+.star-rating {
+  display: flex;
+  justify-content: center;
+}
+>>>>>>> 3a8aced76a061ea50aa40ef1a124155c9dabc3d4
 </style>
