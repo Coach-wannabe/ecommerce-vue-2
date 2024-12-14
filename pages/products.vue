@@ -37,8 +37,20 @@
           :key="product.id"
           class="product-card"
         >
-          <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
-          <h2>{{ product.name }}</h2>
+          <!-- Clickable Product Image -->
+          <img
+            :src="`/assets/images/${product.image}`"
+            alt="Product Image"
+            class="product-image clickable"
+            @click="redirectToProduct(product.id)"
+          />
+          <!-- Clickable Product Name -->
+          <h2
+            class="product-name clickable"
+            @click="redirectToProduct(product.id)"
+          >
+            {{ product.name }}
+          </h2>
           <p>{{ product.price }} Tg</p>
           <star-rating :rating="product.rating"></star-rating>
           <button @click="addToCart(product)">
@@ -59,9 +71,11 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useToast } from "vue-toastification";
+import { useRouter } from "vue-router";
 import { useProductStore } from "~/stores/productStore";
 
 const toast = useToast();
+const router = useRouter();
 const productStore = useProductStore();
 
 const productsPerPage = 6;
@@ -106,6 +120,11 @@ const addToCart = (product) => {
 };
 
 const isInCart = (productId) => productStore.isInCart(productId);
+
+// Redirect to Product Details Page
+const redirectToProduct = (id) => {
+  router.push(`/product/${id}`);
+};
 </script>
 
 <style scoped>
@@ -150,10 +169,29 @@ const isInCart = (productId) => productStore.isInCart(productId);
   border-radius: 8px;
 }
 
-h2 {
+.product-image.clickable {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.product-image.clickable:hover {
+  transform: scale(1.05);
+}
+
+.product-name {
   font-size: 18px;
   color: #333;
   margin-bottom: 10px;
+}
+
+.product-name.clickable {
+  cursor: pointer;
+  color: #007bff;
+  transition: color 0.3s ease;
+}
+
+.product-name.clickable:hover {
+  color: #0056b3;
 }
 
 p {
@@ -188,7 +226,7 @@ button.in-cart:hover {
 .pagination {
   margin-top: 20px;
   display: flex;
-  justify-content: center; /* Центрируем пагинацию */
+  justify-content: center; /* Center pagination */
   align-items: center;
   gap: 20px;
   width: 100%;
@@ -280,7 +318,7 @@ button.in-cart:hover {
   background-color: #0056b3;
 }
 
-.star-rating{
+.star-rating {
   display: flex;
   justify-content: center;
 }

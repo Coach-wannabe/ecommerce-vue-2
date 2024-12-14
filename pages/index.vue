@@ -16,6 +16,7 @@
         </router-link>
 
         <p class="product-price">{{ product.price }} Tg</p>
+        <star-rating :rating="product.rating"></star-rating>
         <button
           :class="buttonClass(product.id)"
           @click="toggleCart(product)"
@@ -190,6 +191,11 @@ const buttonClass = (productId) => {
 
 .remove-from-cart-btn:hover {
   background-color: #c82333;
+}
+
+.star-rating {
+  display: flex;
+  justify-content: center;
 }
 
 /* Responsive Design */
