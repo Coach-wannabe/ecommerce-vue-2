@@ -86,6 +86,7 @@ onMounted(() => {
 
 .content {
   flex-grow: 1; /* Pushes footer to the bottom when content is small */
+  margin-top: 60px;
 }
 
 /* Navigation Bar */
@@ -96,6 +97,10 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
 .nav-links {
@@ -129,11 +134,9 @@ onMounted(() => {
 
 .footer-content {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 20px;
 }
 
 /* Footer Sections */
