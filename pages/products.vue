@@ -1,23 +1,6 @@
 <template>
   <div class="products-page">
-    <aside class="side-menu">
-      <ul>
-        <li
-          @click="filterByCategory('All')"
-          :class="{ active: selectedCategory === 'All' }"
-        >
-          All
-        </li>
-        <li
-          v-for="category in categories"
-          :key="category"
-          @click="filterByCategory(category)"
-          :class="{ active: selectedCategory === category }"
-        >
-          {{ category }}
-        </li>
-      </ul>
-    </aside>
+
 
     <div class="product-section">
       <div v-if="selectedCategory === 'Smartphones'" class="phone-model-buttons">
@@ -128,27 +111,30 @@ const redirectToProduct = (id) => {
 </script>
 
 <style scoped>
-
-html, body {
-  height: 100%;
-  margin: 0;
-}
-
 .products-page {
   display: flex;
+  justify-content: center;  /* Center the entire page content horizontally */
+  align-items: center;      /* Center the entire page content vertically */
   gap: 20px;
   padding: 20px;
-  min-height: 100vh;
+  min-height: 100vh;        /* Ensure full page height for vertical centering */
 }
 
 .product-section {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;      /* Center content horizontally */
+  flex-grow: 1;
+  width: 100%;
 }
 
 .product-grid {
-  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1200px;         /* Limit the max width of the grid */
+  width: 100%;
+  justify-items: center;    /* Center each grid item horizontally */
 }
 
 .product-card {
@@ -159,6 +145,8 @@ html, body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   transition: transform 0.3s ease-in-out;
+  width: 100%;              /* Ensure cards take full width within the grid cell */
+  max-width: 300px;         /* Limit the card width */
 }
 
 .product-card:hover {
@@ -173,34 +161,10 @@ html, body {
   border-radius: 8px;
 }
 
-.product-image.clickable {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.product-image.clickable:hover {
-  transform: scale(1.05);
-}
-
 .product-name {
   font-size: 18px;
   color: #333;
   margin-bottom: 10px;
-}
-
-.product-name.clickable {
-  cursor: pointer;
-  color: #007bff;
-  transition: color 0.3s ease;
-}
-
-.product-name.clickable:hover {
-  color: #0056b3;
-}
-
-p {
-  font-size: 16px;
-  color: #666;
 }
 
 button {
@@ -219,22 +183,10 @@ button:hover {
   background-color: #0056b3;
 }
 
-button.in-cart {
-  background-color: #ff0000;
-}
-
-button.in-cart:hover {
-  background-color: #cc0000;
-}
-
 .pagination {
-  margin-top: auto;
+  margin-top: 20px;
   display: flex;
-<<<<<<< HEAD
-  justify-content: center;
-=======
-  justify-content: center; /* Center pagination */
->>>>>>> 3a8aced76a061ea50aa40ef1a124155c9dabc3d4
+  justify-content: center; /* Center pagination controls */
   align-items: center;
   gap: 20px;
   width: 100%;
@@ -310,7 +262,7 @@ button.in-cart:hover {
 .phone-model-buttons button {
   padding: 10px;
   font-size: 14px;
-  background-color: #007bff; 
+  background-color: #007bff;
   border: none;
   cursor: pointer;
   color: white;
@@ -326,34 +278,9 @@ button.in-cart:hover {
   background-color: #0056b3;
 }
 
-<<<<<<< HEAD
-@media (max-width: 768px) {
-  .products-page {
-    flex-direction: column;
-    padding: 10px;
-  }
-
-  .side-menu {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .product-grid {
-    grid-template-columns: repeat(1, 1fr);
-  }
-}
-
-=======
 .star-rating {
   display: flex;
   justify-content: center;
 }
->>>>>>> 3a8aced76a061ea50aa40ef1a124155c9dabc3d4
+
 </style>
