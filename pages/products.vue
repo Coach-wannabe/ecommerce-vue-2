@@ -140,6 +140,9 @@ const isInCart = (productId) => productStore.isInCart(productId);
 }
 
 .product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
