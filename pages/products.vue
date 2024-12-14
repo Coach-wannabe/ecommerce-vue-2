@@ -2,31 +2,33 @@
   <div class="products-page">
     <aside class="side-menu">
       <ul>
-        <li @click="filterByCategory('All')" :class="{ active: selectedCategory === 'All' }">All</li>
+        <li @click="filterByCategory('All')" :class="{ active: selectedCategory === 'All' }">
+          All
+        </li>
         <li v-for="category in categories" :key="category" @click="filterByCategory(category)" :class="{ active: selectedCategory === category }">
           {{ category }}
         </li>
       </ul>
     </aside>
-
     <div class="product-section">
-      <div v-if="selectedCategory === 'Smartphones'" class="phone-model-buttons">
-        <button v-for="model in phoneModels" :key="model" @click="filterByPhoneModel(model)" :class="{ active: selectedPhoneModel === model }">
-          {{ model }}
-        </button>
-      </div>
-
       <div class="product-grid">
         <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
-          <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
-          <h2>{{ product.name }}</h2>
+          <!-- Link Image to Product Details -->
+          <router-link :to="`/product/${product.id}`">
+            <img :src="`/assets/images/${product.image}`" alt="Product Image" class="product-image" />
+          </router-link>
+          
+          <!-- Link Name to Product Details -->
+          <router-link :to="`/product/${product.id}`" class="product-name">
+            <h2>{{ product.name }}</h2>
+          </router-link>
+          
           <p>{{ product.price }} Tg</p>
           <button @click="addToCart(product)">
             {{ isInCart(product.id) ? "Remove from Cart" : "Add to Cart" }}
           </button>
         </div>
       </div>
-
       <div class="pagination">
         <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
@@ -46,11 +48,10 @@ const productStore = useProductStore();
 
 const productsPerPage = 6;
 const currentPage = ref(1);
-const categories = ["Laptops", "Smartphones", "Tablets", "Appliances", "Electronics"];
-const phoneModels = ["Apple", "Samsung", "Xiaomi", "Huawei", "Vivo"]; // Модели телефонов
+
+const categories = ["Laptops", "Smartphones & Tablets", "Appliances", "Accessories", "Electronics"];
 
 const selectedCategory = computed(() => productStore.selectedCategory);
-const selectedPhoneModel = computed(() => productStore.selectedPhoneModel);
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * productsPerPage;
   const end = start + productsPerPage;
@@ -61,10 +62,6 @@ const totalPages = computed(() => Math.ceil(productStore.filteredProducts.length
 const filterByCategory = (category) => {
   productStore.filterByCategory(category);
   currentPage.value = 1;
-};
-
-const filterByPhoneModel = (model) => {
-  productStore.filterByPhoneModel(model);
 };
 
 const nextPage = () => {
@@ -89,51 +86,6 @@ const isInCart = (productId) => productStore.isInCart(productId);
 </script>
 
 <style scoped>
-.phone-model-buttons {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
-  padding: 10px 0;
-}
-
-.phone-model-buttons button {
-  padding: 10px;
-  font-size: 16px;
-  background-color: #007bff;
-  border: none;
-  cursor: pointer;
-  color: white;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.phone-model-buttons button.active {
-  background-color: #0056b3;
-}
-
-.phone-model-buttons button:hover {
-  background-color: #0056b3;
-}
-
-.product-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.pagination button {
-  padding: 10px 20px;
-  margin: 0 5px;
-  cursor: pointer;
-}
-
 .products-page {
   display: flex;
   gap: 20px;
@@ -188,6 +140,9 @@ const isInCart = (productId) => productStore.isInCart(productId);
 }
 
 .product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -203,22 +158,23 @@ const isInCart = (productId) => productStore.isInCart(productId);
 
 .product-image {
   width: 100%;
-  height: 200px;
+  height: auto;
   max-height: 150px;
-  object-fit: contain;
+  object-fit: cover;
   margin-bottom: 15px;
   border-radius: 8px;
 }
 
-h2 {
+.product-name h2 {
   font-size: 18px;
   color: #333;
   margin-bottom: 10px;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
-p {
-  font-size: 16px;
-  color: #666;
+.product-name:hover h2 {
+  color: #007bff;
 }
 
 button {
@@ -235,14 +191,6 @@ button {
 
 button:hover {
   background-color: #0056b3;
-}
-
-button.in-cart {
-  background-color: #ff0000;
-}
-
-button.in-cart:hover {
-  background-color: #cc0000;
 }
 
 .pagination {
