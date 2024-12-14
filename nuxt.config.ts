@@ -1,6 +1,5 @@
 export default defineNuxtConfig({
   modules: ["@pinia/nuxt"],
-
   ssr: true,
 
   router: {
@@ -25,4 +24,5 @@ export default defineNuxtConfig({
   },
 
   plugins: ["~/plugins/toast.js"],
+  compatibilityDate: "2024-12-14",
 });

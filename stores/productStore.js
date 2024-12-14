@@ -3,18 +3,18 @@ import { defineStore } from "pinia";
 export const useProductStore = defineStore("productStore", {
   state: () => ({
     products: [
-      { id: 1, name: "Laptop", price: 359.999, category: "Laptops", image: "laptop.png" },
-      { id: 2, name: "Phone", price: 275.999, category: "Smartphones & Tablets", image: "phone.jpg" },
-      { id: 3, name: "Fridge", price: 296.2, category: "Appliances", image: "fridge.jpg" },
-      { id: 4, name: "Headphones", price: 48.9, category: "Accessories", image: "naushniki-sony.png" },
-      { id: 5, name: "Air Conditioner", price: 1999.0, category: "Appliances", image: "cond.jpg" },
-      { id: 6, name: "Tablet", price: 1999.0, category: "Smartphones & Tablets", image: "ipad.jpg" },
-      { id: 7, name: "Iron", price: 200.999, category: "Appliances", image: "utug.png" },
-      { id: 8, name: "Washing Machine", price: 1000.999, category: "Appliances", image: "stmach.png" },
-      { id: 9, name: "TV", price: 2960.0, category: "Electronics", image: "tv.png" },
-      { id: 10, name: "Vacuum Cleaner", price: 62.0, category: "Appliances", image: "pul.jpg" },
-      { id: 11, name: "Microwave", price: 120.0, category: "Appliances", image: "micr.jpg" },
-      { id: 12, name: "Camera", price: 119.0, category: "Accessories", image: "camera.jpg" },
+      { id: 1, name: "Laptop", price: 359.999, category: "Laptops", image: "laptop.png", rating: 2.5 },
+      { id: 2, name: "Phone", price: 275.999, category: "Smartphones & Tablets", image: "phone.jpg", rating: 3.5 },
+      { id: 3, name: "Fridge", price: 296.2, category: "Appliances", image: "fridge.jpg", rating: 4.5 },
+      { id: 4, name: "Headphones", price: 48.9, category: "Accessories", image: "naushniki-sony.png", rating: 2.8 },
+      { id: 5, name: "Air Conditioner", price: 1999.0, category: "Appliances", image: "cond.jpg", rating: 1.5 },
+      { id: 6, name: "Tablet", price: 1999.0, category: "Smartphones & Tablets", image: "ipad.jpg", rating: 4.1 },
+      { id: 7, name: "Iron", price: 200.999, category: "Appliances", image: "utug.png", rating: 5 },
+      { id: 8, name: "Washing Machine", price: 1000.999, category: "Appliances", image: "stmach.png", rating: 4.5 },
+      { id: 9, name: "TV", price: 2960.0, category: "Electronics", image: "tv.png", rating:4.6 },
+      { id: 10, name: "Vacuum Cleaner", price: 62.0, category: "Appliances", image: "pul.jpg", rating: 3.8 },
+      { id: 11, name: "Microwave", price: 120.0, category: "Appliances", image: "micr.jpg", rating: 2 },
+      { id: 12, name: "Camera", price: 119.0, category: "Accessories", image: "camera.jpg" , rating: 3.5},
     ],
     cart: [], // Initialize as empty; cart data is populated from localStorage later
     selectedCategory: "All", // Default category
